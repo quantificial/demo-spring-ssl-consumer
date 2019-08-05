@@ -49,11 +49,9 @@ create the truststore
 `keytool -import -alias <server_name> -keystore clientKeyStore -file public.crt`
 
 
+example to use testclient as alias
 
-> keytool -import -alias testclient -keystore clientKeyStore -file server.crt
-> use testclient as alias
-
-
+`keytool -import -alias testclient -keystore clientKeyStore -file server.crt`
 
 
 need to create RestTemplate with truststore and the end point hostname must be matched to the certificate's hostname

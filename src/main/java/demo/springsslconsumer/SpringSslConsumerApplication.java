@@ -55,20 +55,29 @@ public class SpringSslConsumerApplication implements CommandLineRunner {
 	}
 	
 	
+	// specify the trust store resource location from the properties file
+	// it could be from the file location or from the classpath location
     @Value("${trust.store}")
     private Resource trustStore;
 
+    // the trust store password
     @Value("${trust.store.password}")
     private String trustStorePassword;
 	
     RestTemplate restTemplate() throws Exception {
-        SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(trustStore.getURL(), trustStorePassword.toCharArray())
-            .build();
+    	
+        SSLContext sslContext = new SSLContextBuilder()
+        		.loadTrustMaterial(trustStore.getURL(), trustStorePassword.toCharArray())
+        		.build();
+        
         SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(sslContext);
+        
         HttpClient httpClient = HttpClients.custom()
             .setSSLSocketFactory(socketFactory)
             .build();
+        
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
+        
         return new RestTemplate(factory);
     }
 
