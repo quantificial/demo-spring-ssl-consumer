@@ -2,6 +2,7 @@ package demo.springsslconsumer;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +12,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.io.Resource;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
+
+import java.security.cert.X509Certificate;
 
 import javax.net.ssl.SSLContext;
 
@@ -66,9 +69,18 @@ public class SpringSslConsumerApplication implements CommandLineRunner {
 	
     RestTemplate restTemplate() throws Exception {
     	
-        SSLContext sslContext = new SSLContextBuilder()
-        		.loadTrustMaterial(trustStore.getURL(), trustStorePassword.toCharArray())
-        		.build();
+    	// use normal trust stored
+//        SSLContext sslContext = new SSLContextBuilder()
+//        		.loadTrustMaterial(trustStore.getURL(), trustStorePassword.toCharArray())
+//        		.build();
+    	
+    	// accept all certificate - [
+    	TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
+    	
+        SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom()
+                .loadTrustMaterial(null, acceptingTrustStrategy)
+                .build();
+        // accept all certificate - ]
         
         SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(sslContext);
         
